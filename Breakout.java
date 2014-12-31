@@ -34,6 +34,7 @@ public class Breakout extends Program {
 /** Runs the Breakout program. */
 	public void run() {
 		/* You fill this in, along with any subsidiary methods */
+		println("GCanvas for Breakout is: " + field.getGCanvas().toString());
 		field.setup();
 		engine.startup();
 	}

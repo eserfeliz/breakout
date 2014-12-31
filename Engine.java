@@ -13,6 +13,7 @@ public class Engine extends Program {
 	private double vx, vy;
 	private RandomGenerator rgen = RandomGenerator.getInstance();
 	private boolean active;
+	GObject object = null;
 	
 	public Engine(Field f) {
 		field = f;
@@ -36,18 +37,22 @@ public class Engine extends Program {
 		}
 	}
 	
-	private void checkCollisions() {
-		checkEnd();
-		checkWall();
+	public void init() {
 	}
 	
-	private void checkEnd() {
+	private void checkCollisions() {
+		checkForEnd();
+		checkForWall();
+		GObject gobj = checkForFieldObjs();
+	}
+	
+	private void checkForEnd() {
 		if (field.getBall().getY() >= (Breakout.APPLICATION_HEIGHT - (2 * Consts.Ball.BALL_RADIUS))) {
 			makeInactive();
 		}
 	}
 	
-	private void checkWall() {
+	private void checkForWall() {
 		if ((field.getBall().getX() >= (Breakout.APPLICATION_WIDTH - 2 * Consts.Ball.BALL_RADIUS)) || (field.getBall().getX() <= 0)) {
 			reverseX();
 		} else if (field.getBall().getY() <= 0) {
@@ -55,6 +60,101 @@ public class Engine extends Program {
 		}
 	}
 	
+	private GObject checkForFieldObjs() {
+		object = checkPoints(field.getBall().getX(), field.getBall().getY());
+		if (object != null) {
+			if (!(object.getColor() == Color.BLACK)) {
+				field.remove(object);
+			}
+			return object;
+		}
+		return null;
+	}
+	
+	private GObject checkPoints(double x, double y) {
+		object = field.getElementAt(x,y);  //upper left hand corner of ball
+		if (object != null) {
+			if ((field.getElementAt((x + (2 * Consts.Ball.BALL_RADIUS)), y) != null) ^ ((field.getElementAt(x, (y + (2 * Consts.Ball.BALL_RADIUS)))) != null)) {
+				if (field.getElementAt((x + (2 * Consts.Ball.BALL_RADIUS)), y) != null) {
+					reverseY();
+					return object;
+				} else if (field.getElementAt(x, (y + (2 * Consts.Ball.BALL_RADIUS))) != null) {
+					reverseX();
+					return object;
+				}
+			} else if ((field.getElementAt((x + (2 * Consts.Ball.BALL_RADIUS)), y) != null) && ((field.getElementAt(x, (y + (2 * Consts.Ball.BALL_RADIUS)))) != null)) {
+				reverseX();
+				reverseY();
+				return object;
+			} else if ((field.getElementAt(x,y) != null) && (field.getElementAt((x + (Consts.Ball.BALL_RADIUS)), y) != null)) {
+				reverseY();
+				return object;
+			}
+		}
+		object = field.getElementAt((x + (2 * Consts.Ball.BALL_RADIUS)),y); //upper right hand corner of ball
+		if (object != null) {
+			if ((field.getElementAt(x, y) != null) ^ ((field.getElementAt((x + (2 * Consts.Ball.BALL_RADIUS)), (y + (2 * Consts.Ball.BALL_RADIUS)))) != null)) {
+				if ((field.getElementAt(x, y)) != null) {
+					reverseY();
+					return object;
+				} else if (field.getElementAt((x + (2 * Consts.Ball.BALL_RADIUS)), (y + (2 * Consts.Ball.BALL_RADIUS))) != null) {
+					reverseX();
+					return object;
+				}
+			} else if ((field.getElementAt(x, y) != null) && ((field.getElementAt((x + (2 * Consts.Ball.BALL_RADIUS)), (y + (2 * Consts.Ball.BALL_RADIUS)))) != null)) {
+				reverseX();
+				reverseY();
+				return object;
+			} else if ((field.getElementAt((x + (2 * Consts.Ball.BALL_RADIUS)),y) != null) && (field.getElementAt((x + (Consts.Ball.BALL_RADIUS)), y) != null)) {
+				reverseY();
+				return object;
+			}
+		}
+		object = field.getElementAt((x + (2 * Consts.Ball.BALL_RADIUS)),(y + (2 * Consts.Ball.BALL_RADIUS))); //lower right hand corner of ball
+		if (object != null) {
+			if ((field.getElementAt((x + (2 * Consts.Ball.BALL_RADIUS)), y) != null) ^ ((field.getElementAt(x, (y + (2 * Consts.Ball.BALL_RADIUS)))) != null)) {
+				if (field.getElementAt(x, (y + (2 * Consts.Ball.BALL_RADIUS))) != null) {
+					reverseY();
+					return object;
+				} else if (field.getElementAt((x + (2 * Consts.Ball.BALL_RADIUS)), y) != null) {
+					reverseX();
+					return object;
+				}
+			} else if ((field.getElementAt(x, y) != null) && ((field.getElementAt((x + (2 * Consts.Ball.BALL_RADIUS)), (y + (2 * Consts.Ball.BALL_RADIUS)))) != null)) {
+				reverseX();
+				reverseY();
+				return object;
+			} else if ((field.getElementAt((x + (2 * Consts.Ball.BALL_RADIUS)),(y + (2 * Consts.Ball.BALL_RADIUS))) != null) && (field.getElementAt((x + (Consts.Ball.BALL_RADIUS)),(y + (2 * Consts.Ball.BALL_RADIUS))) != null)) {
+				reverseY();
+				return object;
+			}
+		}
+		object = field.getElementAt(x,(y + (2 * Consts.Ball.BALL_RADIUS))); //lower left hand corner of ball
+		if (object != null) {
+			if ((field.getElementAt(x, y) != null) ^ ((field.getElementAt((x + (2 * Consts.Ball.BALL_RADIUS)), (y + (2 * Consts.Ball.BALL_RADIUS)))) != null)) {
+				if (field.getElementAt((x + (2 * Consts.Ball.BALL_RADIUS)), (y + (2 * Consts.Ball.BALL_RADIUS))) != null) {
+					reverseY();
+					return object;
+				} else if (field.getElementAt(x, y) != null) {
+					reverseX();
+					return object;
+				}
+			} else if ((field.getElementAt(x, y) != null) && ((field.getElementAt((x + (2 * Consts.Ball.BALL_RADIUS)), (y + (2 * Consts.Ball.BALL_RADIUS)))) != null)) {
+				reverseX();
+				reverseY();
+				return object;
+			} else if ((field.getElementAt(x,(y + (2 * Consts.Ball.BALL_RADIUS))) != null) && (field.getElementAt((x + (Consts.Ball.BALL_RADIUS)),(y + (2 * Consts.Ball.BALL_RADIUS))) != null)) {
+				reverseY();
+				return object;
+			}
+		}
+		return null;
+	}
+	
+	private void removeBrick(GObject o) {
+		field.remove(o);
+	}
+
 	public boolean isActive() {
 		return active;
 	}
@@ -95,8 +195,8 @@ public class Engine extends Program {
 	private void pause(int x) {
 		try {
 			Thread.sleep(x);
-			} catch (InterruptedException e) {
-			}
+		} catch (InterruptedException e) {
+		}
 	}
 	
 }
