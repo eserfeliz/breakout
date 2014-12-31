@@ -32,48 +32,63 @@ public class Engine extends Program {
 	public void run() {
 		while (isActive()) {
 			moveBall(field.getBall());
-			if ((field.getBall().getX() >= (Breakout.APPLICATION_WIDTH - 2 * Consts.Ball.BALL_RADIUS)) || (field.getBall().getX() <= 0)) {
-				reverseX();
-			} else if (field.getBall().getY() <= 0) {
-				reverseY();
-			}
+			checkCollisions();
 		}
 	}
 	
-	public void reverseX() {
-		vx = -vx;
+	private void checkCollisions() {
+		checkEnd();
+		checkWall();
 	}
 	
-	public void reverseY() {
-		vy = -vy;
+	private void checkEnd() {
+		if (field.getBall().getY() >= (Breakout.APPLICATION_HEIGHT - (2 * Consts.Ball.BALL_RADIUS))) {
+			makeInactive();
+		}
 	}
 	
-	public double absY() {
-		return Math.abs(vy);
-	}
-	
-	public double vx() {
-		return vx;
-	}
-	
-	public double vy() {
-		return vy;
-	}
-	
-	public void moveBall(GOval b) {
-		b.move(vx, vy);
-		pause(30);
+	private void checkWall() {
+		if ((field.getBall().getX() >= (Breakout.APPLICATION_WIDTH - 2 * Consts.Ball.BALL_RADIUS)) || (field.getBall().getX() <= 0)) {
+			reverseX();
+		} else if (field.getBall().getY() <= 0) {
+			reverseY();
+		}
 	}
 	
 	public boolean isActive() {
 		return active;
 	}
 	
-	public void makeActive() {
+	private void reverseX() {
+		vx = -vx;
+	}
+	
+	private void reverseY() {
+		vy = -vy;
+	}
+	
+	private double absY() {
+		return Math.abs(vy);
+	}
+	
+	private double vx() {
+		return vx;
+	}
+	
+	private double vy() {
+		return vy;
+	}
+	
+	private void moveBall(GOval b) {
+		b.move(vx, vy);
+		pause(30);
+	}
+	
+	private void makeActive() {
 		active = true;
 	}
 	
-	public void makeInactive() {
+	private void makeInactive() {
 		active = false;
 	}
 	
