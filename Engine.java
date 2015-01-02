@@ -13,7 +13,8 @@ public class Engine extends Program {
 	private double vx, vy;
 	private RandomGenerator rgen = RandomGenerator.getInstance();
 	private boolean active;
-	GObject object, compPointOne, compPointTwo, compPointThree = null;
+	GObject object = null;
+	int turns = 0;
 	
 	public Engine(Field f) {
 		field = f;
@@ -21,11 +22,13 @@ public class Engine extends Program {
 		vx = rgen.nextDouble(1, 9);
 		vy = -5;
 		active = false;
+		turns = Consts.Turns.NTURNS;
 	}
 	
 	public void startup() {
 		if (!isActive()) {
 			makeActive();
+			turns--;
 		}
 		run();
 	}
@@ -48,12 +51,22 @@ public class Engine extends Program {
 	
 	private void checkForEnd() {
 		if (field.getBall().getY() >= (Breakout.APPLICATION_HEIGHT - (2 * Consts.Ball.BALL_RADIUS))) {
-			makeInactive();
+			if (turns > 0) {
+				turns--;
+				field.getBall().setLocation(Breakout.APPLICATION_WIDTH / 2 - 2 * Consts.Ball.BALL_RADIUS, Consts.Field.HEIGHT - (Consts.Paddle.Spacing.PADDLE_Y_OFFSET + Consts.Paddle.Dimensions.PADDLE_HEIGHT + 2 * Consts.Ball.BALL_RADIUS));
+				absY();
+				reverseY();
+				absX();
+				//field.repaint();
+				pause(5000);
+			} else {
+				makeInactive();
+			}
 		}
 	}
 	
 	private void checkForWall() {
-		System.out.println(vx);
+		System.out.println(isActive());
 		if (field.getBall().getX() <= 0) {
 			absX();
 		} else if (field.getBall().getX() >= (Breakout.APPLICATION_WIDTH - 2 * Consts.Ball.BALL_RADIUS)) {
@@ -166,6 +179,10 @@ public class Engine extends Program {
 	private void moveBall(GOval b) {
 		b.move(vx, vy);
 		pause(30);
+	}
+	
+	private void resetBall(GOval b) {
+		b.move(Breakout.APPLICATION_WIDTH / 2 - 2 * Consts.Ball.BALL_RADIUS, Consts.Field.HEIGHT - (Consts.Paddle.Spacing.PADDLE_Y_OFFSET + Consts.Paddle.Dimensions.PADDLE_HEIGHT + 2 * Consts.Ball.BALL_RADIUS));
 	}
 	
 	private void makeActive() {
