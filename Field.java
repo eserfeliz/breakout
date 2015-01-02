@@ -13,6 +13,7 @@ public class Field extends GraphicsProgram implements MouseMotionListener {
 	GRect brick = null;
 	GRect paddle = null;
 	GOval ball = null;
+	GLabel lives = null;
 	
 	private int bricksRemaining = 0;
 	private int xPos, yPos = 0;
@@ -39,6 +40,7 @@ public class Field extends GraphicsProgram implements MouseMotionListener {
 		setupPaddle();
 		setupBall();
 		println(getElementCount());
+		displayLives();
 	}
 	
 	private void setupBricks() {
@@ -138,6 +140,15 @@ public class Field extends GraphicsProgram implements MouseMotionListener {
                         + " detected on "
                         + e.getComponent().getClass().getName()
                         );
+	}
+	
+	public void displayLives() {
+		lives = new GLabel("Lives: " + (Engine.getTurns() + 1),2,12);
+		add(lives);
+	}
+	
+	public void removeLives() {
+		remove(lives);
 	}
 	
 	private void pause(int x) {

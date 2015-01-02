@@ -14,7 +14,8 @@ public class Engine extends Program {
 	private RandomGenerator rgen = RandomGenerator.getInstance();
 	private boolean active;
 	GObject object = null;
-	int turns = 0;
+	GLabel lives = null;
+	static int turns = 0;
 	
 	public Engine(Field f) {
 		field = f;
@@ -37,6 +38,8 @@ public class Engine extends Program {
 		while (isActive()) {
 			checkCollisions();
 			moveBall(field.getBall());
+			field.removeLives();
+			field.displayLives();
 		}
 	}
 	
@@ -53,13 +56,17 @@ public class Engine extends Program {
 		if (field.getBall().getY() >= (Breakout.APPLICATION_HEIGHT - (2 * Consts.Ball.BALL_RADIUS))) {
 			if (turns > 0) {
 				turns--;
+				field.removeLives();
+				field.displayLives();
 				field.getBall().setLocation(Breakout.APPLICATION_WIDTH / 2 - 2 * Consts.Ball.BALL_RADIUS, Consts.Field.HEIGHT - (Consts.Paddle.Spacing.PADDLE_Y_OFFSET + Consts.Paddle.Dimensions.PADDLE_HEIGHT + 2 * Consts.Ball.BALL_RADIUS));
 				absY();
 				reverseY();
 				absX();
-				//field.repaint();
 				pause(5000);
 			} else {
+				turns--;
+				field.removeLives();
+				field.displayLives();
 				makeInactive();
 			}
 		}
@@ -191,6 +198,10 @@ public class Engine extends Program {
 	
 	private void makeInactive() {
 		active = false;
+	}
+	
+	public static int getTurns() {
+		return turns;
 	}
 	
 	private void pause(int x) {
