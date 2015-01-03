@@ -35,11 +35,9 @@ public class Field extends GraphicsProgram implements MouseMotionListener {
 	}
 	
 	public void setup() {
-		println("GCanvas for Field is: " + this.getGCanvas().toString());
 		setupBricks();
 		setupPaddle();
 		setupBall();
-		println(getElementCount());
 		displayLives();
 	}
 	
@@ -112,6 +110,10 @@ public class Field extends GraphicsProgram implements MouseMotionListener {
 		return brick;
 	}
 	
+	public GLabel getLives() {
+		return lives;
+	}
+	
 	private void drawBall() {
 		ball = new GOval(Breakout.APPLICATION_WIDTH / 2 - 2 * Consts.Ball.BALL_RADIUS, Consts.Field.HEIGHT - (Consts.Paddle.Spacing.PADDLE_Y_OFFSET + Consts.Paddle.Dimensions.PADDLE_HEIGHT + 2 * Consts.Ball.BALL_RADIUS), 2 * Consts.Ball.BALL_RADIUS, 2 * Consts.Ball.BALL_RADIUS);
 		ball.setColor(Color.BLACK);
@@ -130,7 +132,6 @@ public class Field extends GraphicsProgram implements MouseMotionListener {
 			paddle.setLocation(movePos.x, Consts.Field.HEIGHT - (Consts.Paddle.Spacing.PADDLE_Y_OFFSET + Consts.Paddle.Dimensions.PADDLE_HEIGHT));
 		}
 	    canvas.repaint();
-	    //saySomething("Mouse moved", e);
 	    e.consume();
 	}
 	
@@ -160,5 +161,17 @@ public class Field extends GraphicsProgram implements MouseMotionListener {
 	
 	public GCanvas getCanvas() {
 		return canvas;
+	}
+	
+	public int getBricksRemaining() {
+		return bricksRemaining;
+	}
+	
+	public void removeBall() {
+		remove(ball);
+	}
+	
+	public void decreaseBrickCount() {
+		bricksRemaining--;
 	}
 }

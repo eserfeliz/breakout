@@ -16,6 +16,7 @@ public class Engine extends Program {
 	GObject object = null;
 	GLabel lives = null;
 	static int turns = 0;
+	GLabel winMsgLineOne, winMsgLineTwo, winMsgLineThree = null;
 	
 	public Engine(Field f) {
 		field = f;
@@ -49,10 +50,15 @@ public class Engine extends Program {
 	private void checkCollisions() {
 		checkForEnd();
 		checkForWall();
-		GObject gobj = checkForFieldObjs();
+		checkForFieldObjs();
 	}
 	
 	private void checkForEnd() {
+		if (field.getBricksRemaining() <= 0) {
+			field.removeBall();
+			makeInactive();
+			displayWinMsg();
+		}
 		if (field.getBall().getY() >= (Breakout.APPLICATION_HEIGHT - (2 * Consts.Ball.BALL_RADIUS))) {
 			if (turns > 0) {
 				turns--;
@@ -73,7 +79,6 @@ public class Engine extends Program {
 	}
 	
 	private void checkForWall() {
-		System.out.println(isActive());
 		if (field.getBall().getX() <= 0) {
 			absX();
 		} else if (field.getBall().getX() >= (Breakout.APPLICATION_WIDTH - 2 * Consts.Ball.BALL_RADIUS)) {
@@ -84,20 +89,19 @@ public class Engine extends Program {
 		}
 	}
 	
-	private GObject checkForFieldObjs() {
+	private void checkForFieldObjs() {
 		object = checkPoints(field.getBall().getX(), field.getBall().getY());
 		if (object != null) {
 			if (!(object.getColor() == Color.BLACK)) {
 				field.remove(object);
+				field.decreaseBrickCount();
 			}
-			return object;
 		}
-		return null;
 	}
 	
 	private GObject checkPoints(double x, double y) {
 		object = field.getElementAt((x + Consts.Ball.BALL_RADIUS), y);
-		if (object != null && object != field.getBall()) {
+		if (object != null && object != field.getBall() && object != field.getLives()) {
 			absY();
 			if ((field.getElementAt(x, (y + Consts.Ball.BALL_RADIUS)) != null) && (field.getElementAt(x, (y + Consts.Ball.BALL_RADIUS)) != field.getBall())) {
 				reverseX();
@@ -172,7 +176,7 @@ public class Engine extends Program {
 	}
 	
 	private void absY() {
-		vy= Math.abs(vy);
+		vy = Math.abs(vy);
 	}
 	
 	private double vx() {
@@ -185,7 +189,7 @@ public class Engine extends Program {
 	
 	private void moveBall(GOval b) {
 		b.move(vx, vy);
-		pause(30);
+		pause(20);
 	}
 	
 	private void resetBall(GOval b) {
@@ -209,6 +213,21 @@ public class Engine extends Program {
 			Thread.sleep(x);
 		} catch (InterruptedException e) {
 		}
+	}
+	
+	public void displayWinMsg() {
+		Font font = new Font(Font.MONOSPACED, 26, 148);
+		winMsgLineOne = new GLabel("YOU",60,180);
+		winMsgLineOne.setFont(font);
+		winMsgLineTwo = new GLabel("WIN",60,300);
+		winMsgLineTwo.setFont(font);
+		winMsgLineThree = new GLabel("!!!",60,420);
+		winMsgLineThree.setFont(font);
+		field.add(winMsgLineOne);
+		pause(2000);
+		field.add(winMsgLineTwo);
+		pause(2000);
+		field.add(winMsgLineThree);
 	}
 	
 }
